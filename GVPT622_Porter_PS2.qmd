@@ -16,9 +16,17 @@ Please upload your completed assignment to the ELMs course site (under the assig
 
 **Total points: 25**
 
+::: callout-note
+23/25
+:::
+
 ## Question 1
 
 *Points: 10*
+
+::: callout-note
+10/10
+:::
 
 Suppose I want to examine the hypothesis that consuming political news coverage from cable network channels (e.g., CNN, MSNBC, Fox News, etc.) causes citizens to have less trust in government than if they were to consume it from mainstream print media (e.g., New York Times, Wall Street Journal, etc.). What is more, suppose that I believe that this effect is greatest among "young" citizens. Design the contours of an experiment to test this proposition (and be sure to sketch the key elements of the experimental design). Second, briefly describe any significant shortcomings that the experimental design might have.
 
@@ -38,11 +46,19 @@ While this study may enable us to draw some general conclusions about the impact
 
 *Points: 10*
 
+::: callout-note
+8/10
+:::
+
 Below are four hypothetical research designs to determine the effects of democratic governance on the funding of educational institutions. Briefly evaluate each sampling design in terms of its: (1) sampling variability; and, (2) sources of potential bias.
 
 A. sample of educational funding levels for every country in Europe for each of the last 100 years.
 
 -   This study will elicit **low to moderate sampling variability** because of the large sample size (of every country in Europe for the last 100 years). The variability may be moderate however given the range in data over a 100-year time horizon.
+
+::: callout-note
+There would be no variability. You select every entity, every time.
+:::
 
 -   **Assuming the population for the study was Europe,** the study would have **low bias** in which the sample well resembled the population.But **if the population for the study was the World,** this study would have **high bias** which over-represented Europe.
 
@@ -51,6 +67,10 @@ B. sample of educational funding levels in five randomly picked countries drawn 
 -   This study will produce **high sampling variability** because repeated sampling of 5 countries across the entire world could produce a large range of results.
 
 -   Five countries is also insufficient to generalize across the world, so this study would be **moderate to highly biased.**
+
+::: callout-note
+There would be no bias: the countries are selected randomly from the population.
+:::
 
 C, survey of educational administrators that yields responses that allow for a comparison of educational funding levels in Russia and the United States for the six-year period from 2010 to 2015.
 
@@ -99,6 +119,10 @@ ggplot(gdp_growth_df, aes(x = value, fill = factor(date))) +
 
 *Points: 2*
 
+::: callout-note
+2/2
+:::
+
 Describe the distribution of all countries' annual GDP growth rates in 2019 (found in the `gdp_growth_df` dataframe). Do the same for 2020. Include in those descriptions their five-number summaries.
 
 ##### Using the code below, I find the following five-number summary of 2019 growth rates:
@@ -140,6 +164,10 @@ gdp_growth_df %>%
 
 *Points: 2*
 
+::: callout-note
+2/2
+:::
+
 Calculate the mean and standard deviation of all countries' annual GDP growth rates in 2019. Do the same for 2020.
 
 ##### Using the code in Part A, I find the following statistics of 2019 growth rates:
@@ -157,6 +185,10 @@ Calculate the mean and standard deviation of all countries' annual GDP growth ra
 ### Part C
 
 *Points: 1*
+
+::: callout-note
+1/1
+:::
 
 Compare the mean and standard deviation of GDP growth rates in 2019 with those in 2020. What, generally, happened to each country's economy? Do not use the words or phrases "mean" or "standard deviation" in your answer.
 
