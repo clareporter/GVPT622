@@ -18,6 +18,16 @@ Please read all of the questions and tables carefully and follow all instruction
 While this is an open-note exam, you are not to receive assistance from anyone else. As usual, the Honor Code applies.
 :::
 
+```{r}
+## Loading all libraries
+library(skimr)
+library(polisciols)
+library(tidyverse)
+library(ggplot2)
+library(modelsummary)
+library(scales)
+```
+
 ## Conceptual Questions
 
 **Total points: 10**
@@ -30,6 +40,23 @@ Please include all work (and computations) necessary to answer the questions.
 
 The following is a list of observed values, ordered from lowest to highest: 62, 63, 63, 64, 66, 67, 68, 68, 69, 70, 71, 72, 72, 74, 75, 76. What is an accurate five-number summary for these data?
 
+Using the code below, I find the following five-number summary:
+
+-   Min: 62
+
+-   P25: 65.5
+
+-   Median: 68.5
+
+-   P75: 72
+
+-   Max: 76
+
+```{r}
+Q1 <- c(62, 63, 63, 64, 66, 67, 68, 68, 69, 70, 71, 72, 72, 74, 75, 76)
+skim(Q1)
+```
+
 ### Question 2
 
 *1 point*
@@ -38,10 +65,18 @@ Suppose that the median, Q1, and Q3 from question #1 is an accurate representati
 
 A.  76
 B.  62
-C.  83
+C.  **83**
 D.  Both (A) and (C)
 E.  All of the above
 F.  None of the above, or cannot be determined from the information given.
+
+To calculate the outlier we will use the general rule of thumb (P25 - 1.5(IQR); P75 + 1.5(IQR)) to find the lower and upper bounds of 55.75 and 81.75 respectively. 76 and 62 are within these bounds, but 83 is not: choice C is my suspected outlier.
+
+```{r}
+# IQR: 72 - 65.5 = 6.5
+# Lower bound: 65.5 - 1.5(6.5) = 65.5 - 9.75 = 55.75
+# Upper bound: 72 + 1.5(6.5) = 72 + 9.75 = 81.75
+```
 
 ### Question 3
 
@@ -49,17 +84,45 @@ F.  None of the above, or cannot be determined from the information given.
 
 The median age of ten people in a room is 50 years. One 40-year-old person leaves the room. What can we expect will happen to the median age for the remaining nine people? Do we know the median age of those nine people; if so, what is it?
 
+No, it is impossible to know what will happen to the median age for the remaining nine people without knowing the age of those remaining nine people. Depending on the ages of the sample, the median could change or stay the same, as exemplified below.
+
+```{r}
+Q3 <- c(0, 10, 20, 30, 40, 60, 70, 80, 90, 100)
+Q3_mod <- c(0, 10, 20, 30, 60, 70, 80, 90, 100)
+skim(Q3)
+skim(Q3_mod)
+## Here we see the median changes from 50 to 60 when the 40 year old leaves the room
+
+Q3.2 <- c(10, 20, 30, 40, 50, 50, 70, 80, 90, 100)
+Q3.2_mod <- c(10, 20, 30, 50, 50, 70, 80, 90, 100)
+skim(Q3.2)
+skim(Q3.2_mod)
+## Here we see the median stays the same when the 40 year old leaves the room
+```
+
 ### Question 4
 
 *1 point*
 
 The mean age of ten people in a room is 50 years. One 70-years-old person leaves the room. What can we expect will happen to the mean age for the remaining nine people? Do we know the mean age of those nine people; if so, what is it?
 
+Since 70 is greater than the mean of 50, we can expect that by removing the 70 year old from the sample, our mean will decrease. Here, we don't need to know the the ages of the others in the sample to calculate the new mean. Using the code below, I find the mean age for the remaining nine people is 47.8 (or about 48) years old.
+
+```{r}
+# Calculate the total age: 50(10) = 500 years old
+# Subtract the 70 year old: 500-70 = 430
+# Find the new average: 430/9 = 47.8 years old
+```
+
 ### Question 5
 
 *1 point*
 
 The mean age of ten people in a room is 50 years and the standard deviation is 3 years. One person leaves the room, and both the mean and the standard deviation become larger. What do we know about the age of that person?
+
+If the mean increases after one person leaves the room, this tells us this person is younger than the average age (50 years old).
+
+If the standard deviation increases after this person leaves the room, this tells us this person's age is relatively close to the average age (50 years old) because their presence decreased the variability of ages in the room.
 
 ### Question 6
 
@@ -69,8 +132,10 @@ The distribution of some variable has a median that is smaller than its mean. Wh
 
 A.  The shape of the distribution would be symmetric
 B.  The shape of the distribution would be skewed left
-C.  The shape of the distribution would be skewed right
+C.  **The shape of the distribution would be skewed right**
 D.  None of the above -- cannot be determined from the information given.
+
+If the median is smaller than its mean, then this tells us C. The shape of the distribution would be skewed right
 
 ### Question 7
 
@@ -81,7 +146,9 @@ Suppose I want to test the hypothesis that the U.S. public's approval of the pre
 A.  A random sample of 1,200 people from a list of all U.S. residential addresses
 B.  A random sample of 600 people from a list of all registered students at the University of Maryland
 C.  A random sample of 1,200 people from a list of all registered students at the University of Maryland
-D.  A random sample of 600 people from a list of all U.S. residential addresses.
+D.  **A random sample of 600 people from a list of all U.S. residential addresses.**
+
+D. A random sample of 600 people from a list of all U.S. residential addresseswould elicit a large sampling variability but lower sampling bias.
 
 ### Question 8
 
@@ -89,17 +156,23 @@ D.  A random sample of 600 people from a list of all U.S. residential addresses.
 
 Which of those research design strategies should I expect to exhibit the lowest degree of expected sampling bias?
 
+Both **A and D** would have the lowest degree of expected sampling bias.
+
 ### Question 9
 
 *1 point*
 
 I hypothesize that, as people become more conservative, they watch NASCAR more often. My measure of conservatism is a three category variable—not conservative, somewhat conservative, very conservative. My measure of NASCAR viewing is four category—none, occasionally, often, frequently. I construct a cross tab to examine this hypothesis. What distributions would I compare to test my hypothesis?
 
+Conservatism is my independent variable and NASCAR viewing is my dependent variable, so I would look at the distribution of NASCAR viewing (i.e., the percentage of none, occasionally, often, or frequently) within each category of conservatism (conservative, somewhat conservative, very conservative)
+
 ### Question 10
 
 *1 point*
 
 I examine the correlation between my independent variable and my dependent variable, and find a correlation coefficient of 0.9. What does this tell me about the causal effect of the IV on the DV?
+
+A correlation coefficient of 0.9 tells us the strength of the relationship between my independent and dependent variables is very strong, and the direction of this relationship is positive. We cannot, however, conclude any thing about the causality of the relationship from the correlation coefficient.
 
 ## Applied Questions
 
@@ -113,6 +186,11 @@ Please include your R code. All data sets referenced below are available through
 
 I am interested in exploring US voters' views of Donald Trump prior to the last US Presidential election. Use the `nes` data set in the `polisciols` R package to answer the following questions.
 
+```{r}
+## Save dataset
+nes <- polisciols::nes
+```
+
 #### Part A
 
 Plot the distribution of NES respondents' answers to the following question: On a scale from 0 to 100, how would you rate Donald Trump? Describe that distribution. Include the five-number summary in your answer.
@@ -121,9 +199,42 @@ Plot the distribution of NES respondents' answers to the following question: On 
 These responses are stored in the `therm_trump` variable.
 :::
 
+Using the code below, I produce the following graph (below) to plot the distribution of NES respondents' answers to the question: On a scale from 0 to 100, how would you rate Donald Trump?
+
+Respondents' ratings of Donald Trump are highly polarized - most people either strongly approve or disapprove of him. This is a bimodal distribution, peaking at 0 and 100 in rating.
+
+Using the code below, I also find the following five-number summary:
+
+-   Min: 0
+
+-   P25: 0
+
+-   Median: 30
+
+-   P75: 85
+
+-   Max: 100
+
+```{r}
+ggplot(nes, aes(x =  therm_trump)) + 
+  geom_density(fill = "skyblue", alpha = 0.75, na.rm = TRUE) + 
+  theme_minimal() + 
+  theme(plot.title = element_text(face = "bold"),
+        plot.title.position = "plot") + 
+  labs(title = "On a scale from 0 to 100, how would you rate Donald Trump?",
+       x = "Rating",
+       y = "Density",
+       fill = "Year",
+       caption = "Source: Nes Data")
+
+summary(nes$therm_trump, na.rm=TRUE)
+```
+
 #### Part B
 
 If I were to select a respondent at random, what is the answer they most likely provided to this question?
+
+If you were to select a respondent at random, the answer they most likely provided to this question would be a zero, the most frequent answer in the sample.
 
 #### Part C
 
@@ -133,13 +244,45 @@ I hypothesize that people who hold different views about the size of the differe
 Respondents' answer to the question - Do you think the difference in incomes between rich people and poor people in the United States today is larger, smaller, or about the same as it was 20 years ago? - are stored in the `income_gap` variable.
 :::
 
+See code below:
+
+```{r}
+## Group based on views of income gap
+nes_group <- nes %>%
+  filter(!is.na(income_gap), !is.na(therm_trump)) %>%
+  mutate(income_gap = factor(income_gap,
+                                levels = c("Smaller", "About the same", 
+                                           "Larger"),
+                                ordered = TRUE))
+
+## Plot with groupings
+ ggplot(nes_group, aes(x = income_gap, y = therm_trump)) +
+  geom_boxplot(fill = "skyblue") +
+  labs(
+    title = "Perceived Change in Income Inequality and Trump Ratings",
+    x = "Perceived Change in Income Inequality",
+    y = "Trump Rating"
+  ) 
+
+```
+
 #### Part D
 
 Do these responses support my hypothesis?
 
+Yes, these respondents support your hypothesis. In the above graph we can clearly see that those who think the income gap inequality has become larger provided a much lower rating of trump compared with respondents who think the income gap inequality is smaller or about the same (and gave Trump a much higher rating). This graph suggests a relationship between views about Trump and views about the size of the difference in incomes between rich people and poor people in the United States today compared to 20 years ago.
+
 #### Part E
 
 If I were to select an individual who thought the difference in incomes between rich people and poor people in the United States today is **smaller** than it was 20 years ago, what is the most likely answer they provided to the question about their views of Donald Trump?
+
+If you were to select an individual who thought the difference in incomes between rich people and poor people in the United States today is smaller than it was 20 years ago, the rating they most likely provided of Trump would be 100, the most frequent rating for people in that group.
+
+```{r}
+ignorant_people <- subset(nes, income_gap == "Smaller")
+ignorant_mode <- as.numeric(names(sort(table(ignorant_people$therm_trump), decreasing = TRUE)[1]))
+ignorant_mode
+```
 
 ### Question 2
 
@@ -147,19 +290,40 @@ If I were to select an individual who thought the difference in incomes between 
 
 I hypothesize that providing free child care at election voting stations will increase turnout among families with young children. Design an experiment to test this hypothesis. Describe any shortcomings your experimental design may have.
 
+In order to understand how provision of free child care at election voting stations (independent variable) impacts turnout among families with young children (dependent variable), we would randomly sample 5,000 voting stations across a range of districts in the United States to measure turnout among families with young children in a clustered randomized controlled trial.
+
+The sample should include voting stations in districts across a range of political affiliations, states, and demographic make up. At the beginning of the study, each voting station will be randomly assigned to either provide free child care or not. The voting stations assigned the provision of the free child care is the treatment group, and the voting stations without free child care is the control. Families with young children will be defined as voters who have a child under the age of 13. Those who come to the sampled voting stations on election day will be asked if they have a child under the age of 13 years old; total voters with children under the age of 13 will be recorded for each voting station.
+
+This experiment will elicit a simple data frame with three columns - one which details the polling station location, one which states whether free child care was provided, and one which has the total count of young families who voted at that polling station.
+
+Following the data collection, we can compare the the counts of families with young children who voted at polling stations with free child care and polling stations without free child care. This data will reveal either a strong or weak relationship between the provision of child free care and voter turnout for families with young children. By comparing the mean, median and variation in voter turnout of families with young children at polling stations with and without free childcare, we can accept or reject the alternative hypothesis that providing free child care at election voting stations will increase turnout among families with young children.
+
+While this study may enable us to draw some general conclusions about the impact of free child care provision at polling stations, it is not without shortcomings. Some shortcomings are due to factors beyond our control. For example, ideally in a parallel universe, counts of families with young children at pollings stations would be recorded without the treatment, then reset back in time to record counts at the same stations now with the treatment to create a perfect comparison. Of course, there are also shortcomings in this experiment which could be overcome by a different study design. For example, parents of young children may respond with greater variability to the treatment based on when and how the information was received (e.g., a week versus an hour prior to voting), and the type of child care provided (e.g., care taker is known to the parents or not, child's friends are also at the child care). Rather than providing uniform child care across the voting stations, an alternative study might use the most popular child care service available in the neighborhood of that district. Similarly, another study might provide the parents the opportunity to learn about the child care services a week ahead of the election day. Another shortcoming is the imperfect measure of families with young children. As designed, this study may capture adults with children for whom they are not the primary caretaker (and therefore unaffected by the provision of the free childcare). While alternative measures exist - like counting families who brought young children to the polling station - these methods produce their own shortcomings too (like missing families who paid for their own child care).
+
 ### Question 3
 
 *5 points*
 
 I hypothesize that countries that share similar regime types are more likely to sign mutual defense agreements with each other than countries that do not share similar regimes. Use the `alliances_regime` data set from the `polisciols` R package to answer the following questions.
 
+```{r}
+## Save dataset
+alliances_regime <- polisciols::alliances_regime
+```
+
 #### Part A
 
 Construct a cross tab of these variables.
 
+```{r}
+datasummary_crosstab(defense_agreement ~ regime_dyad, data = alliances_regime)
+```
+
 #### Part B
 
 Interpret your cross tab. Do these data support my hypothesis?
+
+This cross tab tells us that countries with joint regimes sign defense agreements more often (61.3%) than those with mixed regimes (38.7%). Conversely, mixed regimes are less likely to sign defense agreements (58.8%) compared to joint regimes (41.2%). This finding supports your hypothesis that countries that share similar regime types are more likely to sign mutual defense agreements with each other than countries that do not share similar regimes.
 
 ### Question 4
 
@@ -167,18 +331,107 @@ Interpret your cross tab. Do these data support my hypothesis?
 
 I am interested in exploring the relationship between each country's wealth and its renewable energy use. To do this, I collect data on each country's GDP per capita (as a proxy for wealth) and the proportion of its overall energy consumption that is produced using renewable energy sources. Use the `renewables.csv` dataset published on ELMs to answer the following questions.
 
+```{r}
+## Save dataset
+renewables <- read_csv("renewables.csv")
+```
+
 #### Part A
 
 What proportion of overall energy consumption do the middle 50 percent of countries produce using renewable energy sources? Include an appropriate plot in your answer.
+
+The middle 50% of countries use about 36.7% of the world's total renewable energy. We can view this proportion of renewable energy usage in the graph produced below.
+
+```{r}
+## Find the middle 50% of countries
+q <- summary(renewables$renewables_use)
+
+## Define the quartiles
+q25 <- q["1st Qu."]
+q75 <- q["3rd Qu."]
+
+## Filter for the middle 50%
+m50 <- renewables %>%
+  filter(renewables_use >= q25 & renewables_use <= q75)
+
+## Sum the middle 50% renewable usage, and divide by the sum for all countries to get the proportion
+proportion_m50 <- sum(m50$renewables_use, na.rm = TRUE) / sum(renewables$renewables_use, na.rm = TRUE)
+proportion_m50
+
+## In order to visualize this, I need to first mark the middle 50%
+renewables_marked <- renewables %>%
+  mutate(group = ifelse(renewables_use >= q25 & renewables_use <= q75, "Middle 50%", "Other"))
+
+## Now I can make a histogram
+ ggplot(renewables, aes(x = renewables_use)) +
+  geom_histogram(binwidth = 5, fill = "grey", color = "white") +  
+  geom_histogram(data = m50, aes(x = renewables_use), 
+                 binwidth = 5, fill = "skyblue", color = "white") + 
+  geom_vline(xintercept = c(q25, q75), linetype = "dashed", color = "blue", size = 1) +
+  labs(
+    title = "Distribution of Renewable Energy Use Across Countries",
+    subtitle = paste0("Middle 50% of countries account for 36.7% of total renewable energy use"),
+    x = "Renewable Energy Use",
+    y = "Number of Countries"
+  ) +
+  theme_minimal(base_size = 13)
+```
 
 #### Part B
 
 Describe the distribution of GDP per capita across countries globally. Include an appropriate plot in your answer.
 
+The distribution of GDP per capita is unimodal and right skewed, meaning most countries have a low to moderate GDP per capita and a small number of countries have very high GDP per capita. We can confirm these findings with the code and plot below.
+
+```{r}
+skim(renewables$gdp_per_cap)
+
+ggplot(renewables, aes(x = gdp_per_cap)) +
+  geom_density(fill = "skyblue", alpha = 0.6) +
+  labs(
+    title = "Density of GDP per Capita Across Countries",
+    x = "GDP per Capita (USD)",
+    y = "Density"
+  ) +
+  theme_minimal()
+```
+
 #### Part C
 
 Is the relationship between renewable energy use and wealth linear? What about the relationship between renewable energy use and each country's logged GDP per capita? Include two plots (one of each relationship) in your answer.
 
+No, the relationship between renewable energy use and wealth is not linear, however, the relationship between renewable energy use and each country's logged GDP per capita is linear. We can confirm this finding by plotting a scatter plot of both renewable energy use and wealth, and renewable energy use and each country's logged GDP per capita, as well as by calculating the correlation coefficients in Part D.
+
+```{r}
+## First let's plot the relationship
+ggplot(renewables, aes(x = gdp_per_cap, y = renewables_use)) +
+  geom_point() +  
+  theme_minimal() +
+  labs(x = "GDP per capita",
+       y = "Renewable energy use (% of total energy)",
+       title = "Renewable Energy Use by Country vs GDP per Capita")
+
+## This doesn't look linear, so let's try taking the log of gdp per capita
+ggplot(renewables, aes(x = log(gdp_per_cap), y = renewables_use)) +
+  geom_point() +  
+  geom_smooth(method = "lm", se = F) + 
+  theme_minimal() +
+  labs(x = "Logged GDP per capita",
+       y = "Renewable energy use (% of total energy)",
+       title = "Renewable Energy Use by Country vs Logged GDP per Capita")
+```
+
 #### Part D
 
 Describe the direction and strength of the relationship between renewable energy use and wealth.
+
+Looking at the graph produced above, logged GDP per capita and renewable energy usage appears to have a moderate negative relationship. We can confirm this intuition by calculating the correlation coefficient. Using the code below, I find the correlation coefficient between logged GDP per capita and renewable energy to be -0.607. This figure confirms that the relationship between our variables is not perfect, but moderately strong and negative.
+
+```{r}
+## Without log
+cor(renewables$gdp_per_cap, renewables$renewables_use, use = "complete.obs")
+## This is a weak linear relationship, which is why we want to take the log
+
+## With log
+cor(log(renewables$gdp_per_cap), renewables$renewables_use, use = "complete.obs")
+```
