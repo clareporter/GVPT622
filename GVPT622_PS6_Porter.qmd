@@ -1,0 +1,209 @@
+---
+title: "Problem Set 6"
+subtitle: "Due date: 4 November"
+name: "Clare Porter"
+format: 
+  html:
+    self-contained: true
+toc: true
+editor: visual
+execute: 
+  echo: true
+  warning: false
+---
+
+Please upload your completed assignment to the ELMs course site (under the assignments menu) and to your class Github repository. You need to upload both your Quarto document (with R code, as needed) and its rendered output (either as a PDF or HTML file).
+
+**Total points: 35**
+
+## Question 1
+
+*Points: 10*
+
+I hypothesize that the mean mathematics SAT score for University of Maryland students is different to 600. I take an SRS of 625 students and find that the mean mathematics score among those students is 610. The standard deviation of my sample is 75.
+
+### Part A
+
+Based on my sample, what is a point estimate for the mean mathematics SAT score for University of Maryland students?
+
+Based on your sample, the point estimate for the mean mathematics SAT score for UMD students in 610.
+
+### Part B
+
+What is a 95% confidence interval around that estimate?
+
+The 95% confidence interval for the mean mathematics SAT score is \~(604.12, 615.88)
+
+```{r}
+# CI = point estimate +- MOE
+# MOE = z*SE = 1.96*3 = 5.88
+# SE = sd/sqrt(n) = 75/sqrt(625) = 75/25 = 3
+# CI = 610 +- 5.88
+# = (604.12, 615.88)
+```
+
+### Part C
+
+What is the null hypothesis?
+
+The mean mathematics SAT score for University of Maryland students is 600.
+
+### Part D
+
+What is the two-tailed p-value and what does it mean?
+
+The two-tailed p-value is 0.0008, which is much smaller than 0.01, so we can therefore reject the null hypothesis of the mean being equal SAT score being 600.
+
+```{r}
+# z = (sample mean - null)/SE
+# z = (610-600)/3 = 10/3 = 3.33
+# A z score of 3.33 is associated with a 0.9996 probability
+# two tailed p-value = 2(1-0.9996) = 0.0008
+```
+
+### Part E
+
+Do the data support my hypothesis? Why, or why not?
+
+Yes, the data supports your hypothesis. The two tailed p-value is much smaller than 0.01, meaning we can conclude with confidence that the mean is different to 600.
+
+## Question 2
+
+*Points: 10*
+
+I take an SRS of 900 citizens in a public opinion survey and find that the mean feeling thermometer rating (on a 0 to 100 scale) of President Trump is 51.5 with a standard deviation of 25. Now, suppose I hypothesize that feelings toward Trump should be greater than 50.
+
+### Part A
+
+What is the null hypothesis?
+
+The null hypothesis is that feelings toward Trump should be equal to 50.
+
+### Part B
+
+What is a 95% confidence interval around the sample statistic? Does this interval indicate support for a two-tailed test of my hypothesis (`p < 0.05` as the threshold)? Why, or why not?
+
+The 95% confidence interval for the mean mathematics SAT score is \~(49.87, 53.13). Because 50 lies within this interval, we cannot reject the null hypothesis at the 0.05 level for a two-tailed test.
+
+```{r}
+# CI = point estimate +- MOE
+# MOE = z*SE = 1.96*0.83 = 1.63
+# SE = sd/sqrt(n) = 25/sqrt(900) = 25/30 = 0.83
+# CI = 51.5 +- 1.63
+# = (49.87, 53.13)
+```
+
+### Part C
+
+What is a 90% confidence interval around the sample statistic? Does this interval indicate support for a one-tailed test of my hypothesis (`p < 0.05` as the threshold)? Why, or why not?
+
+The 90% confidence interval for the mean mathematics SAT score is \~(50.135, 52.865). Because our 90% confidence interval is above 50, we can reject the null hypothesis at the 0.05 level for a one-tailed test.
+
+```{r}
+# CI = point estimate +- MOE
+# MOE = z*SE = 1.645*0.83 = 1.365
+# SE = sd/sqrt(n) = 25/sqrt(900) = 25/30 = 0.83
+# CI = 51.5 +- 1.365
+# = (50.135, 52.865)
+```
+
+## Question 3
+
+*Points: 5*
+
+Suppose I conduct a difference of means test and obtain a t-statistic of 2.50. What does this indicate about the statistical significance of the sample mean compared to the null hypothesis?
+
+A t-statistic of 2.50 corresponds with a p-value around 0.01, indicating the sample mean is statistically significant, and we can reject the null hypothesis with confidence.
+
+## Question 4
+
+*Points: 5*
+
+I hypothesize that fewer than 40% of registered voters approve of President Trump. I conduct an SRS of 720 registered voters and find that 37.9% of them approve of President Trump.
+
+### Part A
+
+Based on my sample, what is a point estimate for the proportion of the population that approves of President Trump?
+
+Based on your sample, the point estimate for the proportion of the population that approves of President Trump is 37.9%.
+
+### Part B
+
+What is a 90% confidence interval around that estimate?
+
+A 90% confidence interval for the point estimate of 37.9% is \~(0.3493, 0.4087) or \~(34.9%, 40.9%)
+
+```{r}
+# CI = point estimate +- MOE
+# MOE = z*SE = 1.645*0.018 = 0.0297
+# SE = sqrt(0.379(1-0.3789)/720) = sqrt(0.0003) = 0.018
+# CI = 0.379 +- 0.0297 = (0.3493, 0.4087)
+```
+
+### Part C
+
+What is the null hypothesis?
+
+The null hypothesis is that 40% of registered voters approve of President Trump
+
+### Part D
+
+What is the one-tailed p-value and what does it mean?
+
+The one-tailed p-value is 0.12302, which is much larger than 0.01, meaning we cannot reject the null hypothesis. A p-value of 0.12302 means there is about a 12.3% chance of getting a sample with less 40% voters who approve of Trump.
+
+```{r}
+# z = (phat - pnull)/SE = (0.379-0.40)/0.018 = -1.16
+# A score of -1.16 is associated with a 0.12302 probability
+```
+
+### Part E
+
+Do the data support my hypothesis? Why, or why not?
+
+No, we cannot reject the null hypothesis that 40% of registered voters approve of Trump. Even though the sample mean of 37.9% is below 40%, this difference is not statistically signfiicant in the data given our large p-value.
+
+## Question 5
+
+*Points: 5*
+
+```{r}
+
+library(wbstats)
+library(tidyverse)
+
+q_5_df <- wb_data(c("SP.DYN.TFRT.IN", "SE.ADT.1524.LT.FE.ZS"),
+                  start_date = 2022,
+                  end_date = 2022) |> 
+  rename(lit_rate = `SE.ADT.1524.LT.FE.ZS`,
+         fertility = `SP.DYN.TFRT.IN`) |> 
+  mutate(lit_rate = cut_interval(lit_rate, 2, labels = c("Lower half", "Upper half"))) |> 
+  drop_na(fertility, lit_rate)
+```
+
+I hypothesize that countries with higher rates of literacy among young women have lower birth rates, on average, compared to countries that have lower rates of young female literacy. Use data collected above from the World Bank to test my hypothesis. State the null hypothesis and interpret what the results tell us about the null and alternative hypotheses. Show all relevant work in a professional format.
+
+[Null Hypothesis:]{.underline} Countries with higher rates of literacy among young women have the same birth rates, on average, compared to countries with lower rates of young female literacy.
+
+[Alternative Hypothesis:]{.underline} Countries with higher rates of literacy among young women have lower birth rates, on average, compared to countries that have lower rates of young female literacy.
+
+Using the code below, we find a t-test of 8.098 and a p-value of 0.00006711. Since the p-value is much lower than 0.05, we can reject the null hypothesis that the birth rates are the same across countries with higher and low literacy rates and conclude that there is statistically significant evidence that higher female literacy is associated with lower fertility.
+
+```{r}
+# Lets first look at the data 
+library(skimr)
+colnames(q_5_df)
+skim(q_5_df)
+
+ggplot(q_5_df, aes(x = fertility, y=lit_rate, fill = lit_rate)) + 
+  geom_boxplot() + 
+  theme_minimal() +
+  theme(legend.position = "none") + 
+  scale_fill_discrete(type = c("#D88C9A", "#8bc5ed")) + 
+  labs(x = "Fertility",
+       y = "Literacy Rate")
+
+# Next let's run a t-test 
+ttest_fertility <- t.test(fertility ~ lit_rate, data = q_5_df, alternative = "greater")
+ttest_fertility
+```
