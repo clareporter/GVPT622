@@ -50,7 +50,7 @@ CI_upper <- b1 + b1_SE*t_stat_95
 CI_lower <- b1 - b1_SE*t_stat_95
 c(CI_lower, CI_upper)
 # p-value
-p_value <- 2 * (1 - pt(abs(t_stat), ss))
+p_value <- 2 * (1 - pt(abs(t_stat), dof))
 p_value
 ```
 
