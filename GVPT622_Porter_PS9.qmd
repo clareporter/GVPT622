@@ -1,0 +1,248 @@
+---
+title: "Problem Set 9"
+subtitle: "Due date: 9 December"
+name: "Clare"
+format: 
+  html:
+    self-contained: true
+toc: true
+editor: visual
+execute: 
+  echo: true
+  warning: false
+  message: false
+---
+
+Please upload your completed assignment to the ELMs course site (under the assignments menu). Remember to include an annotated script file for all work with R and show your math for all other problems (if applicable, or necessary). Please also upload your completed assignment to the Github repository that you have shared with us. *We should be able to run your script with no errors.*
+
+**Total points: 40**
+
+```{r}
+options(repos = c(CRAN = "https://cloud.r-project.org"))
+install.packages("plotly")
+install.packages("ggdist")
+library(tidyverse)
+library(wbstats)
+library(broom)
+library(modelsummary)
+library(plotly)
+library(ggdist)
+```
+
+## Question 1
+
+*Points: 10*
+
+Table 1 below reports the results from two regression models. In Model 1 in Table 1 $Y$ is regressed on $X_1$ and, in Model 2, $Y$ is regressed on both $X_1$ and $X_2$. Why might $X_1$ be statistically significant at conventional levels in Model 1 but statistically insignificant in Model 2? Be as specific as possible.
+
+![](images/ps9.png){fig-align="center"}
+
+The difference in statistical significance in X1 between model 1 and model 2 is due to omitted variable bias.
+
+X1 may be statistically significant in Model 1 because it is the only predictor value of Y in the equation. If X1 and X2 are correlated, then it is possible that the coefficient of X1 captures both X1s association with Y *and* any part of variation in Y that is actually due to X2 but happens to be correlated with X1.
+
+Once X2 is added to Model 2, the model can separately estimate its independent association. If X2 is the better predictor of Y, and X1s predicted correlation in Model 1 was mostly due to its correlation with X2, then the coefficient of X1 may decrease and become statistically insignificant.
+
+## Question 2
+
+*Points: 10*
+
+Using the `censusAggregate` dataset (posted on ELMs), which is survey data aggregated to the state level (1972-2000), estimate a regression with `vote` as the dependent variable and the following independent variables: `nonSouth`, `edr`, and `pcthsg`. Report the results in a professionally formatted table and interpret the regression results.
+
+Also, create a figure to display the predicted values (with confidence intervals) for the effect of `pcthsg` on the turnout rate. Lastly, is it meaningful to interpret the constant term on its own? Why, or why not?
+
+::: callout-note
+`vote` is the turnout rate in a state in a given year (i.e., the number of people who voted divided by the number eligible to vote).
+
+`nonSouth` is a dummy variable equal to `0` for Southern states and a `1` for non-Southern states.
+
+`pcthsg` is the percentage of the population in a state that graduated high school.
+
+`edr` is a dummy variable equal to `1` for states that used election-day registration and a `0` for states without election-day registration.
+:::
+
+```{r}
+# Load Data
+census <- read.csv("censusAggregate-1.csv")
+
+# Run Regression
+r1 <- lm(vote ~ nonSouth + edr + pcthsg, data = census)
+summary(r1)
+
+# Professional format Table
+modelsummary(r1, 
+             title = "Regression Results",
+             coef_rename = c(vote = "Vote",
+                             nonSouth = "Non Southern States",
+                             pcthsg = "High School Graduates",
+                             edr = "Election Day Registration"),
+             statistic = c("t = {statistic}", "SE = {std.error}", "conf.int"))
+```
+
+Our regression results show statistical significance for all three variables (Non Southern States, Election Day Registration, and High School Graduates).
+
+On average, non-Southern states tend to have about 5.5 percentage points higher voter turnout compared with Southern states, holding election-day registration and high school graduation rates constant. Similarly, states with election-day registration, tend to, on average, have about 5.8 percentage points higher voter turnout compared with states who do not have election-day registration, holding state location (southern vs north) and high school graduation rates constant. The association between high school graduation rates and voter turnout is much smaller, at 0.1, but is still statistically significant, meaning that on average, states with a one percentage greater in high school graduation rates tend to have a 0.1 percentage point higher rate of voter turn out compared with states with one percentage smaller of high school graduates.
+
+While these predictors explain about 28% of the variation in voting turnout, much of the variation remains unexplained.
+
+```{r}
+# Plotting the predicted values with CIs for the effect of pcthsg on the turnout rate
+ggplot(r1, aes(x=pcthsg, y=vote))+
+  geom_point()+
+  geom_smooth(method = "lm", se = TRUE) +
+  labs(
+    x = "High School Graduation Rate (%)",
+    y = "Vote Share (%)",
+    title = "Predicted Vote Share by High School Graduation Rate") +
+  theme_minimal()
+```
+
+An intercept of 54.002 of means a voter turnout of about 54% is expected, on average, in Southern states without election-day registration and with a high school graduation rate of 0%. A 0% high school graduation rate is unrealistic, so this value does not hold much real-world meaning/interpretation, but rather acts as a baseline for the predictors estimated.
+
+## Question 3
+
+*Points: 5*
+
+A linear regression model of the turnout rate in a state (`vote`) estimated by the percentage of the population in a state that graduated high school (`pcthsg`) alone shows this sole independent variable to be less likely to be observed if it had no explanatory power (the null were true) compared to the fuller model estimated in the last question. Why is this the case?
+
+```{r}
+# Run Simplified Regression
+r2 <- lm(vote ~ pcthsg, data = census)
+summary(r2)
+```
+
+By running the simplified regression, we see a larger coefficient value associated with high school graduation levels and stronger statistical significance relative to the statistical significance and coefficient value for high school graduation rates in our multivariate regression in Q2. Like in Q1, the difference in statistical significance of high school graduation rates between the simplified regression and multivariate regression is likely due to omitted variable bias:
+
+High school graduation rates may be more statistically significant in the simplified regression because it is the only predictor value of voter turnout in the equation. It is likely that high school graduation levels are also correlated with state region (north versus south) and election-day registration, so it is possible that our new coefficient captures variation from our omitted variables and not just the independent association between high school graduation rates and voter turnout.
+
+## Question 4
+
+*Points: 15*
+
+Using one of the other data sets available in the `poliscidata` package pick one dependent variable and two or more independent variables. Run a regression of the dependent variable on the independent variables. In your answer, describe why you picked the variables you did, produce a professionally formatted results table, and describe your statistical and substantive findings.
+
+For this analysis, I used the 2020 National Election Study (NES) data set available in the `polisciols` package, with the goal to examine which factors are most strongly associated with respondents’ evaluations of President Biden, measured by the `therm_biden` thermometer score.
+
+I first removed missing and non-informative responses, including those coded as "Don't know" or "Refused" in variables. Next, I recoded several categorical variables into numeric variables so they could be included in my regression analysis:
+
+-   `dem` was coded as 1 for Democrats and 0 for others
+
+-   `education` was converted into a scale from 0 (less than high school) to 4 (graduate degree)
+
+-   `attention_to_politics` was converted into a scale from 0 (never) to 4 (always)
+
+-   `income_gap` was converted into a scale from 0 (smaller) to 2 (larger)
+
+These transformations allowed all predictors to be interpreted quantitatively while preserving meaningful differences between categories.
+
+I then explored a series of regressions to guide my variable selection. I first considered all available potential independent variables: age, education, attention to politics, perceived income gap, partisan identification, and thermometer scores for Trump.
+
+I debated the trade off of including the Trump thermometer in this regression. The variable improves predictive power (R\^2), but it also changes the interpretation of the regression coefficients, likely introducing multicolinearity and endogeneity. These issues are problematic for a causal model, but less so for a correlation one, so, I decided to keep the Trump thermometer in my final model.
+
+I then considered other possibilities to refine my model. In the first regression (r3), income gap was not statistically significant so dropping this non-significant predictor minimally reduced R\^2, indicating limited explanatory power from this variables. Although education was statistically significant, very little explanatory power was lost by omitting it as well, and the statistical significance and estimates for the retained variables remain relatively the same.
+
+I thus ended up with the regression: r7 \<- lm(therm_biden \~ age + therm_trump + dem_num, data = nes_new)
+
+This simiplifed model captures both demographic and partisan dimensions of Biden evaluations which are statistically significant, while excluding variables that minimally contribute to the explanatory power.
+
+We can now interpret the model as such:
+
+On average, someone an additional year older tends to have a 0.263-point higher score on the Biden thermometer compared with someone a year younger, holding the Trump thermometer and being a democrat constant.
+
+On average, someone who ranked the Trump thermometer an additional point tends to rank the Biden thermometer 0.665 points lower compared with someone who ranked the Trump thermometer a point lower, holding age and being a democrat constant.
+
+On average, someone who is a democrat tends to rank the Biden thermometer 7.041 points higher compared with someone who is not a democrat, holding age and the trump thermometer constant.
+
+About 66% of the variation in the Biden thermometer scores is accounted for by these three predictors. Overall, this model shows evaluations of Biden as being primarily shaped by partisanship and evaluations of political opponents, as well as age; all variables which have a correlational nature. More details regarding this model can be found in the table below.
+
+```{r}
+## Lets pull our handy nes dataset 
+polisciols::nes
+nes <- polisciols::nes
+colnames(nes)
+
+# Lets clean our data
+nes <- na.omit(nes)
+nes_clean <- nes %>%
+  filter(
+    attention_to_politics != "Refused",
+    education != "Refused",
+    income_gap != "Refused"
+  )
+
+nes_clean <- nes %>%
+  filter(
+    education != "Don't know",
+    income_gap != "Don't know")
+
+
+# I'd like to predict Biden thermometer scores
+# First we need to convert our categorical variables 
+nes_new <- nes_clean
+levels(nes_clean$dem)
+nes_new$dem_num <- ifelse(nes_new$dem == "Democrat", 1,
+                   ifelse(nes_new$dem == "Other", 0, NA))
+levels(nes_clean$education)
+nes_new$education_num <- recode(nes_new$education,
+                            "Less than high school credential" = 0,
+                            "High school credential" = 1,
+                            "Some post-high school, no bachelor’s degree" = 2,
+                            "Bachelor’s degree"  = 3,
+                            "Graduate degree" = 4) 
+levels(nes_clean$attention_to_politics)
+nes_new$attention_num <- recode(nes_new$attention_to_politics,
+                            "Never" = 0,
+                            "Some of the time" = 1,
+                            "About half the time" = 2,
+                            "Most of the time" = 3,
+                            "Always"  = 4) 
+levels(nes_clean$income_gap)
+nes_new$gap_num <- recode(nes_new$income_gap,
+                            "Smaller" = 0,
+                            "About the same" = 1,
+                            "Larger" = 2)
+
+# Now let's try a few regressions to see which has the best statistical significance
+r3 <- lm(therm_biden ~ education_num + age + attention_num +
+                       gap_num + therm_trump + dem_num, 
+         data = nes_new)
+summary(r3)
+
+#gap_num was not statistically signficant, so let's remove that variable
+r4 <- lm(therm_biden ~ education_num + age + attention_num
+                        + therm_trump + dem_num, 
+         data = nes_new)
+summary(r4)
+
+#lets check the criticality of including therm_trump as a variable
+r5 <- lm(therm_biden ~ education_num + age + attention_num
+                         + dem_num, 
+         data = nes_new)
+summary(r5)
+## Note that the R^2 signficantly decreases when we lose the therm_trump variable, so that one is important
+
+# Education is statistically signficant, but has the next least significance, so lets see the effect of omitting that variable
+r6 <- lm(therm_biden ~ age + attention_num
+                        + therm_trump + dem_num, 
+         data = nes_new)
+summary(r6)
+## Very little explanatory power was lost by omitting the last variable, and the statstical significance and estimates for the retained variables remain relatively the same
+
+# Lets see if we can simplify the equation anymore
+r7 <- lm(therm_biden ~ age + therm_trump + dem_num, 
+         data = nes_new)
+summary(r7)
+## r7 retains the explanatory power (r^2 decrease is marginal) while simplifying the equaiont, and all variables are statistically significant so lets go with this equation
+
+# Lets create a professionally formatted table for r7
+modelsummary(r7,
+             title = "Regression Results",
+             coef_rename = c(
+               age = "Age",
+               therm_trump = "Trump Thermometer",
+               dem_num = "Democrat (Yes=1)"
+             ),
+             statistic = c("t = {statistic}", "SE = {std.error}", "conf.int")
+)
+
+```
