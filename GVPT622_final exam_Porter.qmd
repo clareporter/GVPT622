@@ -25,6 +25,13 @@ Please include all work (and computations) necessary to answer the questions.
 
 **Total points: 20 (2 points each)**
 
+```{r}
+library(modelsummary)
+library(tidyverse)
+library(modelsummary)
+library(ggplot2)
+```
+
 ### Question 1
 
 Suppose you estimate a bivariate regression model with a total sample size of 50 and obtain a standard error for $\beta_1$ of 2.50. What is the smallest regression coefficient ($\beta_1$) that you could have and still be able to reject the null hypothesis (of no relationship between $X_1$ and $Y$) at the 0.05 level with a one-tailed test?
